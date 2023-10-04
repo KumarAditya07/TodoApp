@@ -1,20 +1,76 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeTod } from '../feature/todo/todoSlice'
+import { removeTod,editTodo} from '../feature/todo/todoSlice'
 
 const Todoos = () => {
     const todos = useSelector(state => state.todos)
     const dispatch = useDispatch()
 
-  return (
-   <>
-    <div>Todos</div>
+    const [ isEditing, setEditing ] = useState(false);
+
+    const [ state, setState ] = useState({
+      id: '', text: ''
+  });
+
+
+     //methods
+
+     const onEditToggle = ( id, text) => {
+      setEditing(true);
+      setState({ ...state, id, text});
+     }
+     const handleChange = (e) =>{
+      setState({...state, [e.target.name]: e.target.value,  
+     })
+    }
+    const { text, id } = state;
+    const edit = () =>{
+      if(text === ''){
+       setState({...state});
+       return;
+      }
+      dispatch((editTodo({text, id})));
+      setEditing(false);
+     }
+
+    
+
+  return <div>
+  {
+      isEditing ?
+     <div className='form'>
+     
+      <input type='text' value={text} name='text' 
+         onChange={handleChange}>
+      </input> 
+      <span>
+      <button className="inline-flex w-8 h-8 rounded-lg   -sm border border-black/10 justify-center items-center bg-green-500 hover:bg-gray-100 shrink-0 disabled:opacity-50"
+      type='button' 
+        onClick={edit}>Edit
+     </button>
+
+     </span>
+       </div> :
+
+
     <ul className="list-none">
         {todos.map((todo) => (
           <li
             className="mt-4 flex justify-between items-center bg-zinc-800 px-4 py-2 rounded"
             key={todo.id}
           >
+            <button
+                className="inline-flex w-8 h-8 rounded-lg   -sm border border-black/10 justify-center items-center bg-gray-50 hover:bg-gray-100 shrink-0 disabled:opacity-50"
+                onClick={() => onEditToggle(todo.id,todo.text)} 
+             
+            >
+              ✏️
+            </button>
+
+           
+
+    
+
             <div className='text-white'>{todo.text}</div>
             <button
              onClick={() => dispatch(removeTod(todo.id))}
@@ -38,9 +94,10 @@ const Todoos = () => {
           </li>
         ))}
       </ul>
+  }
+  </div>
 
-   </>
-  )
+
 }
 
 export default Todoos
