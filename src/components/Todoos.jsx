@@ -40,7 +40,7 @@ const Todoos = () => {
       isEditing ?
      <div className='form'>
      
-      <input type='text' value={text} name='text' 
+      <input type='text' value={text} name='text'  
          onChange={handleChange}>
       </input> 
       <span>
